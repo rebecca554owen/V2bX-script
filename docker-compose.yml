@@ -1,0 +1,16 @@
+services:
+  v2bx:
+    image: ghcr.io/rebecca554owen/v2bx:latest
+    container_name: v2bx
+    network_mode: host # host 模式方便监听ipv4/ipv6。
+    restart: always
+    volumes:
+      - /etc/v2bx/:/etc/v2bx/ # 挂载目录用于解决证书申请。
+      # - ./config.yml:/etc/v2bx/config.yml # 挂载当前目录的配置文件到容器内部。
+      # - ./dns.json:/etc/v2bx/dns.json # 挂载当前目录的配置文件到容器内部。
+      # - ./route.json:/etc/v2bx/route.json # 挂载当前目录的配置文件到容器内部。
+      # - ./custom_inbound.json:/etc/v2bx/custom_inbound.json # 挂载当前目录的配置文件到容器内部。
+      # - ./custom_outbound.json:/etc/v2bx/custom_outbound.json # 挂载当前目录的配置文件到容器内部。
+      # - ./rulelist:/etc/v2bx/rulelist # 挂载当前目录的配置文件到容器内部。
+    # environment:
+

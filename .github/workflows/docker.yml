@@ -1,11 +1,6 @@
 name: docker-publish
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "Dockerfile"
-      - "entrypoint.sh"
-      - ".github/workflows/docker.yml"
 
 jobs:
   docker:

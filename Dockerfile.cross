@@ -1,0 +1,16 @@
+# Release Stage
+FROM alpine:latest
+WORKDIR /app
+
+# 安装必要的工具包
+RUN apk --update --no-cache add tzdata ca-certificates \
+    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+# 创建配置目录
+RUN mkdir -p /etc/V2bX/
+
+# 复制已编译的二进制文件
+COPY ./build/V2bX-linux-amd64 /usr/local/bin/V2bX
+
+# 设置入口命令
+ENTRYPOINT ["V2bX", "server", "--config", "/etc/V2bX/config.json"]

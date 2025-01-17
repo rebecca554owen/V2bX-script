@@ -1,0 +1,21 @@
+services:
+  v2bx:
+    image: ghcr.io/rebecca554owen/v2bx:latest
+    container_name: v2bx
+    network_mode: host
+    restart: always
+    # volumes:
+        # - /etc/V2bX/cert/:/etc/V2bX/cert/
+    environment:
+        # 通用配置
+        - CoreType=${CoreType:-xray} # 核心类型，默认xray，可选xray/sing/hysteria2
+        - ApiHost=${ApiHost}  # API主机地址（必须）
+        - ApiKey=${ApiKey}  # API密钥（必须）
+        - NodeID=${NodeID}  # 节点ID（必须）
+        - NodeType=${NodeType:-shadowsocks} # 节点类型（必须）：shadowsocks, vless, vmess, trojan, hysteria, hysteria2
+        - CertMode=${CertMode:-none} # 证书模式，默认none，可选http/dns/self
+
+        # 证书相关配置
+        - CertDomain=${CertDomain:-v2bx.com} # 证书域名
+        - CF_API_EMAIL=${CF_API_EMAIL} # Cloudflare API邮箱
+        - CF_API_KEY=${CF_API_KEY} # Cloudflare API密钥

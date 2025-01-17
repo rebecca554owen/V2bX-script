@@ -16,3 +16,14 @@ Find the source code here: [InazumaV/V2bX](https://github.com/InazumaV/V2bX)
 ```
 wget -N https://raw.githubusercontent.com/wyx2685/V2bX-script/master/install.sh && bash install.sh
 ```
+# docker 启动命令
+
+```
+docker run -d --name v2bx --network host --restart always \
+  -e CoreType=${CoreType:-xray} \
+  -e ApiHost=your_api_host \
+  -e ApiKey=your_api_key \
+  -e NodeID=1 \
+  -e NodeType=${NodeType:-shadowsocks} \
+  ghcr.io/rebecca554owen/v2bx:latest
+```

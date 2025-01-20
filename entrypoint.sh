@@ -81,10 +81,10 @@ case "$CoreType" in
         core="sing"
         core_sing=true
         case "$NodeType" in
-            "vless"|"vmess"|"shadowsocks"|"trojan"|"hysteria"|"hysteria2") ;;
+            "vless"|"vmess"|"shadowsocks"|"trojan"|"hysteria"|"hysteria2"|"tuic"|"anytls") ;;
             *)
                 echo "错误：sing-box核心不支持该协议：$NodeType"
-                echo "sing-box核心支持的协议：vless, vmess, shadowsocks, trojan, hysteria, hysteria2"
+                echo "sing-box核心支持的协议：vless, vmess, shadowsocks, trojan, hysteria, hysteria2, tuic, anytls"
                 exit 1
                 ;;
         esac

@@ -54,6 +54,10 @@ add_node_config() {
             echo -e "${green}5. Hysteria2${plain}"
         fi
         echo -e "${green}6. Trojan${plain}"  
+        if [ "$core_sing" == true ]; then
+            echo -e "${green}7. Tuic${plain}"
+            echo -e "${green}8. AnyTLS${plain}"
+        fi
         read -rp "请输入：" NodeType
         case "$NodeType" in
             1 ) NodeType="shadowsocks" ;;
@@ -62,13 +66,16 @@ add_node_config() {
             4 ) NodeType="hysteria" ;;
             5 ) NodeType="hysteria2" ;;
             6 ) NodeType="trojan" ;;
+            7 ) NodeType="tuic" ;;
+            8 ) NodeType="anytls" ;;
             * ) NodeType="shadowsocks" ;;
         esac
     fi
-
+    fastopen=true
     if [ "$NodeType" == "vless" ]; then
         read -rp "请选择是否为reality节点？(y/n)" isreality
-    elif [ "$NodeType" == "hysteria2" ]; then
+    elif [ "$NodeType" == "hysteria" ] || [ "$NodeType" == "hysteria2" ] || [ "$NodeType" == "tuic" ] || [ "$NodeType" == "anytls" ]; then
+        fastopen=false
         istls="y"
     fi
 
@@ -89,7 +96,7 @@ add_node_config() {
             2 ) certmode="dns" ;;
             3 ) certmode="self" ;;
         esac
-        read -rp "请输入节点证书域名(example.com)]：" certdomain
+        read -rp "请输入节点证书域名(example.com)：" certdomain
         if [ "$certmode" != "http" ]; then
             echo -e "${red}请手动修改配置文件后重启V2bX！${plain}"
         fi
@@ -111,7 +118,7 @@ add_node_config() {
             "Timeout": 30,
             "ListenIP": "0.0.0.0",
             "SendIP": "0.0.0.0",
-            "DeviceOnlineMinTraffic": 1000,
+            "DeviceOnlineMinTraffic": 200,
             "EnableProxyProtocol": false,
             "EnableUot": true,
             "EnableTFO": true,
@@ -142,8 +149,8 @@ EOF
             "Timeout": 30,
             "ListenIP": "$listen_ip",
             "SendIP": "0.0.0.0",
-            "DeviceOnlineMinTraffic": 1000,
-            "TCPFastOpen": true,
+            "DeviceOnlineMinTraffic": 200,
+            "TCPFastOpen": $fastopen,
             "SniffEnabled": true,
             "CertConfig": {
                 "CertMode": "$certmode",
@@ -172,7 +179,7 @@ EOF
             "Timeout": 30,
             "ListenIP": "",
             "SendIP": "0.0.0.0",
-            "DeviceOnlineMinTraffic": 1000,
+            "DeviceOnlineMinTraffic": 200,
             "CertConfig": {
                 "CertMode": "$certmode",
                 "RejectUnknownSni": false,
@@ -391,7 +398,11 @@ EOF
     ]
 }
 EOF
-
+    ipv6_support=$(check_ipv6_support)
+    dnsstrategy="ipv4_only"
+    if [ "$ipv6_support" -eq 1 ]; then
+        dnsstrategy="prefer_ipv4"
+    fi
     # 创建 sing_origin.json 文件
     cat <<EOF > /etc/V2bX/sing_origin.json
 {
@@ -399,16 +410,19 @@ EOF
     "servers": [
       {
         "tag": "cf",
-        "address": "1.1.1.1",
-        "strategy": "prefer_ipv4"
+        "address": "1.1.1.1"
       }
-    ]
+    ],
+    "strategy": "$dnsstrategy"
   },
   "outbounds": [
     {
       "tag": "direct",
       "type": "direct",
-      "domain_strategy": "prefer_ipv4"
+      "domain_resolver": {
+        "server": "cf",
+        "strategy": "$dnsstrategy"
+      }
     },
     {
       "type": "block",
